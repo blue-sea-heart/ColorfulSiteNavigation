@@ -25,15 +25,28 @@ function generateColor(baseColor: string): string {
     return `#${(parseInt(color, 16) + 100000).toString(16)}`;
 }
 
-// 切换编辑模式的函数
+// 更新模式显示的函数
+function updateModeDisplay() {
+    const modeDisplay = document.getElementById("mode-display");
+    if (modeDisplay) {
+        modeDisplay.textContent = isEditMode ? "编辑模式" : "浏览模式";
+    }
+}
+
 function toggleEditMode() {
     isEditMode = !isEditMode;
     document.body.classList.toggle('edit-mode', isEditMode);
     updateLinks(); // 切换编辑模式时刷新页面
+    updateModeDisplay(); // 更新模式显示
 }
 
 // 添加网址的函数
 function addLink(): void {
+    if (!isEditMode) {
+        alert("请先切换到编辑模式！");
+        return;
+    }
+
     const title = (document.getElementById("link-title") as HTMLInputElement).value;
     const url = (document.getElementById("link-url") as HTMLInputElement).value;
     const category = (document.getElementById("link-category") as HTMLInputElement).value;
@@ -111,4 +124,75 @@ function closeAddLinkForm(): void {
 // 显示添加网址表单
 function showAddLinkForm(): void {
     document.getElementById("add-link-form")!.style.display = "block";
+}
+
+// 关闭添加一级分类表单
+function closeAddCategoryForm(): void {
+    document.getElementById("add-category-form")!.style.display = "none";
+}
+
+// 显示添加一级分类表单
+function showAddCategoryForm(): void {
+    document.getElementById("add-category-form")!.style.display = "block";
+}
+
+// 添加一级分类的函数
+function addCategory(): void {
+    if (!isEditMode) {
+        alert("请先切换到编辑模式！");
+        return;
+    }
+
+    const categoryName = (document.getElementById("category-name") as HTMLInputElement).value;
+    if (categoryName) {
+        const categoryObj = { name: categoryName, subcategories: [] };
+        categories.push(categoryObj);
+        localStorage.setItem('categories', JSON.stringify(categories));
+        updateCategorySelector();
+        closeAddCategoryForm();
+    }
+}
+
+// 关闭添加二级分类表单
+function closeAddSubcategoryForm(): void {
+    document.getElementById("add-subcategory-form")!.style.display = "none";
+}
+
+// 显示添加二级分类表单
+function showAddSubcategoryForm(): void {
+    document.getElementById("add-subcategory-form")!.style.display = "block";
+}
+
+// 添加二级分类的函数
+function addSubcategory(): void {
+    if (!isEditMode) {
+        alert("请先切换到编辑模式！");
+        return;
+    }
+
+    const categoryName = (document.getElementById("subcategory-category") as HTMLInputElement).value;
+    const subcategoryName = (document.getElementById("subcategory-name") as HTMLInputElement).value;
+    if (categoryName && subcategoryName) {
+        const categoryObj = categories.find(c => c.name === categoryName);
+        if (categoryObj) {
+            const randomColor = generateColor("#ff6347"); // 使用一级分类颜色生成二级分类颜色
+            const subcategoryObj = { name: subcategoryName, color: randomColor, links: [] };
+            categoryObj.subcategories.push(subcategoryObj);
+            localStorage.setItem('categories', JSON.stringify(categories));
+            updateLinks(); // 刷新页面
+        }
+        closeAddSubcategoryForm();
+    }
+}
+
+// 更新分类选择器
+function updateCategorySelector(): void {
+    const categorySelector = document.getElementById("category") as HTMLSelectElement;
+    categorySelector.innerHTML = '<option value="all">全部</option>';
+    categories.forEach(category => {
+        const option = document.createElement("option");
+        option.value = category.name;
+        option.textContent = category.name;
+        categorySelector.appendChild(option);
+    });
 }

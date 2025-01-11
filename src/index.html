@@ -17,6 +17,7 @@
         </select>
     </div>
     <button onclick="toggleEditMode()">切换编辑模式</button>
+    <span id="mode-display">浏览模式</span>
 </header>
 
 <main id="link-list">
@@ -25,6 +26,8 @@
 
 <footer>
     <button onclick="showAddLinkForm()">添加网址</button>
+    <button onclick="showAddCategoryForm()">添加一级分类</button>
+    <button onclick="showAddSubcategoryForm()">添加二级分类</button>
 </footer>
 
 <div id="add-link-form" style="display:none;">
@@ -35,6 +38,21 @@
     <input type="text" id="link-subcategory" placeholder="二级分类">
     <button onclick="addLink()">添加</button>
     <button onclick="closeAddLinkForm()">取消</button>
+</div>
+
+<div id="add-category-form" style="display:none;">
+    <h2>添加一级分类</h2>
+    <input type="text" id="category-name" placeholder="一级分类名称">
+    <button onclick="addCategory()">添加</button>
+    <button onclick="closeAddCategoryForm()">取消</button>
+</div>
+
+<div id="add-subcategory-form" style="display:none;">
+    <h2>添加二级分类</h2>
+    <input type="text" id="subcategory-category" placeholder="一级分类名称">
+    <input type="text" id="subcategory-name" placeholder="二级分类名称">
+    <button onclick="addSubcategory()">添加</button>
+    <button onclick="closeAddSubcategoryForm()">取消</button>
 </div>
 
 <script src="../dist/app.js"></script>

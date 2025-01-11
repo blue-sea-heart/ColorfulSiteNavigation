@@ -85,3 +85,39 @@ footer {
         width: 180px;
     }
 }
+#mode-display {
+    margin-left: 10px;
+    font-weight: bold;
+}
+#add-category-form, #add-subcategory-form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+}
+
+#add-category-form input, #add-subcategory-form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#add-category-form button, #add-subcategory-form button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff6347;
+    color: white;
+    cursor: pointer;
+}
+
+#add-category-form button:hover, #add-subcategory-form button:hover {
+    background-color: #e65125;
+}
