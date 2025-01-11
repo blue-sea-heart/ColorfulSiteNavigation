@@ -1,0 +1,87 @@
+﻿body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f8ff;
+    color: #333;
+    text-align: center;
+}
+
+header {
+    background: #ff6347;
+    padding: 20px;
+    color: white;
+}
+
+h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+select {
+    font-size: 1rem;
+    padding: 5px;
+}
+
+#link-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.link-card {
+    background-color: white;
+    border-radius: 8px;
+    width: 250px;
+    margin: 10px;
+    padding: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.link-card a {
+    text-decoration: none;
+    color: #007BFF;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+footer {
+    margin-top: 20px;
+}
+
+#add-link-form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+}
+
+.edit-mode .link-card {
+    cursor: grab;
+}
+
+.edit-mode .link-card:active {
+    cursor: grabbing;
+}
+
+@media screen and (max-width: 768px) {
+    .link-card {
+        width: 200px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .link-card {
+        width: 180px;
+    }
+}

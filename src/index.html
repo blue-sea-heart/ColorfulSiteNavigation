@@ -1,10 +1,42 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多彩网址导航</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-$END$
+<header>
+    <h1>多彩网址导航</h1>
+    <div id="category-selector">
+        <label for="category">选择一级分类：</label>
+        <select id="category" onchange="updateLinks()">
+            <option value="all">全部</option>
+            <!-- 动态加载一级分类 -->
+        </select>
+    </div>
+    <button onclick="toggleEditMode()">切换编辑模式</button>
+</header>
+
+<main id="link-list">
+    <!-- 动态加载网址 -->
+</main>
+
+<footer>
+    <button onclick="showAddLinkForm()">添加网址</button>
+</footer>
+
+<div id="add-link-form" style="display:none;">
+    <h2>添加网址</h2>
+    <input type="text" id="link-title" placeholder="网址标题">
+    <input type="url" id="link-url" placeholder="网址链接">
+    <input type="text" id="link-category" placeholder="一级分类">
+    <input type="text" id="link-subcategory" placeholder="二级分类">
+    <button onclick="addLink()">添加</button>
+    <button onclick="closeAddLinkForm()">取消</button>
+</div>
+
+<script src="../dist/app.js"></script>
 </body>
 </html>
