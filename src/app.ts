@@ -38,6 +38,18 @@ function toggleEditMode() {
     document.body.classList.toggle('edit-mode', isEditMode);
     updateLinks(); // 切换编辑模式时刷新页面
     updateModeDisplay(); // 更新模式显示
+
+    // 根据编辑模式显示或隐藏按钮
+    const addLinkBtn = document.getElementById("add-link-btn") as HTMLElement;
+    if (addLinkBtn) {
+        addLinkBtn.style.display = isEditMode ? 'block' : 'none';
+    }
+
+    const addCategoryBtn = document.getElementById("add-category-btn") as HTMLElement;
+    if (addCategoryBtn) {
+        addCategoryBtn.style.display = isEditMode ? 'block' : 'none';
+    }
+
 }
 
 // 添加网址的函数
@@ -99,10 +111,25 @@ function updateLinks(): void {
                 subcategoryCard.appendChild(linkElement);
             });
 
+            if (isEditMode) {
+                const addLinkBtn = document.createElement("button");
+                addLinkBtn.textContent = "添加网址";
+                addLinkBtn.onclick = () => showAddLinkForm(category.name, subcategory.name);
+                subcategoryCard.appendChild(addLinkBtn);
+            }
+
             linkList.appendChild(subcategoryCard);
         });
+
+        if (isEditMode) {
+            const addSubcategoryBtn = document.createElement("button");
+            addSubcategoryBtn.textContent = "添加二级分类";
+            addSubcategoryBtn.onclick = () => showAddSubcategoryForm(category.name);
+            linkList.appendChild(addSubcategoryBtn);
+        }
     });
 }
+
 
 // 拖拽事件处理
 function dragStart(event: DragEvent, categoryName: string, subcategoryName: string): void {
@@ -122,8 +149,18 @@ function closeAddLinkForm(): void {
 }
 
 // 显示添加网址表单
-function showAddLinkForm(): void {
-    document.getElementById("add-link-form")!.style.display = "block";
+function showAddLinkForm(categoryName: string, subcategoryName: string): void {
+    const addLinkForm = document.getElementById("add-link-form")!;
+    addLinkForm.style.display = "block";
+
+    (document.getElementById("link-category") as HTMLInputElement).value = categoryName;
+    (document.getElementById("link-category") as HTMLInputElement).disabled = true; // 禁用一级分类输入框
+
+    (document.getElementById("link-subcategory") as HTMLInputElement).value = subcategoryName;
+    (document.getElementById("link-subcategory") as HTMLInputElement).disabled = true; // 禁用二级分类输入框
+
+    (document.getElementById("link-title") as HTMLInputElement).value = "";
+    (document.getElementById("link-url") as HTMLInputElement).value = "";
 }
 
 // 关闭添加一级分类表单
@@ -159,10 +196,12 @@ function closeAddSubcategoryForm(): void {
 }
 
 // 显示添加二级分类表单
-function showAddSubcategoryForm(): void {
-    document.getElementById("add-subcategory-form")!.style.display = "block";
-}
+function showAddSubcategoryForm(categoryName: string): void {
+    const addSubcategoryForm = document.getElementById("add-subcategory-form")!;
+    addSubcategoryForm.style.display = "block";
 
+    (document.getElementById("subcategory-category") as HTMLInputElement).value = categoryName;
+}
 // 添加二级分类的函数
 function addSubcategory(): void {
     if (!isEditMode) {

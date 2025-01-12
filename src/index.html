@@ -25,17 +25,15 @@
 </main>
 
 <footer>
-    <button onclick="showAddLinkForm()">添加网址</button>
-    <button onclick="showAddCategoryForm()">添加一级分类</button>
-    <button onclick="showAddSubcategoryForm()">添加二级分类</button>
+    <button id="add-category-btn" onclick="showAddCategoryForm()">添加一级分类</button>
 </footer>
 
 <div id="add-link-form" style="display:none;">
     <h2>添加网址</h2>
     <input type="text" id="link-title" placeholder="网址标题">
     <input type="url" id="link-url" placeholder="网址链接">
-    <input type="text" id="link-category" placeholder="一级分类">
-    <input type="text" id="link-subcategory" placeholder="二级分类">
+    <input type="text" id="link-category" placeholder="一级分类" readonly> <!-- 使用 readonly 属性 -->
+    <input type="text" id="link-subcategory" placeholder="二级分类" readonly> <!-- 使用 readonly 属性 -->
     <button onclick="addLink()">添加</button>
     <button onclick="closeAddLinkForm()">取消</button>
 </div>
