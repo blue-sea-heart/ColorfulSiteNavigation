@@ -121,3 +121,17 @@ footer {
 #add-category-form button:hover, #add-subcategory-form button:hover {
     background-color: #e65125;
 }
+
+.link-card button {
+    margin-top: 5px;
+    padding: 5px 10px;
+    background-color: #ff6347;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.link-card button:hover {
+    background-color: #e65125;
+}

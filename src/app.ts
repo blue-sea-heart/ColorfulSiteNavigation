@@ -113,6 +113,14 @@ function updateLinks(): void {
                 linkElement.href = link.url;
                 linkElement.textContent = link.title;
                 subcategoryCard.appendChild(linkElement);
+
+                // 添加删除网址按钮
+                if (isEditMode) {
+                    const deleteLinkBtn = document.createElement("button");
+                    deleteLinkBtn.textContent = "删除";
+                    deleteLinkBtn.onclick = () => confirmDeleteLink(category.name, subcategory.name, link.title);
+                    subcategoryCard.appendChild(deleteLinkBtn);
+                }
             });
 
             if (isEditMode) {
@@ -120,6 +128,12 @@ function updateLinks(): void {
                 addLinkBtn.textContent = "添加网址";
                 addLinkBtn.onclick = () => showAddLinkForm(category.name, subcategory.name);
                 subcategoryCard.appendChild(addLinkBtn);
+
+                // 添加删除二级分类按钮
+                const deleteSubcategoryBtn = document.createElement("button");
+                deleteSubcategoryBtn.textContent = "删除";
+                deleteSubcategoryBtn.onclick = () => confirmDeleteSubcategory(category.name, subcategory.name);
+                subcategoryCard.appendChild(deleteSubcategoryBtn);
             }
 
             linkList.appendChild(subcategoryCard);
@@ -130,9 +144,16 @@ function updateLinks(): void {
             addSubcategoryBtn.textContent = "添加二级分类";
             addSubcategoryBtn.onclick = () => showAddSubcategoryForm(category.name);
             linkList.appendChild(addSubcategoryBtn);
+
+            // 添加删除一级分类按钮
+            const deleteCategoryBtn = document.createElement("button");
+            deleteCategoryBtn.textContent = "删除";
+            deleteCategoryBtn.onclick = () => confirmDeleteCategory(category.name);
+            linkList.appendChild(deleteCategoryBtn);
         }
     });
 }
+
 
 // 拖拽事件处理
 function dragStart(event: DragEvent, categoryName: string, subcategoryName: string): void {
@@ -235,6 +256,57 @@ function addSubcategory(): void {
             updateLinks(); // 刷新页面
         }
         closeAddSubcategoryForm();
+    }
+}
+
+// 删除网址的函数
+function deleteLink(categoryName: string, subcategoryName: string, linkTitle: string): void {
+    const category = categories.find(c => c.name === categoryName);
+    if (category) {
+        const subcategory = category.subcategories.find(s => s.name === subcategoryName);
+        if (subcategory) {
+            subcategory.links = subcategory.links.filter(link => link.title !== linkTitle);
+            localStorage.setItem('categories', JSON.stringify(categories));
+            updateLinks(); // 刷新页面
+        }
+    }
+}
+
+// 删除二级分类的函数
+function deleteSubcategory(categoryName: string, subcategoryName: string): void {
+    const category = categories.find(c => c.name === categoryName);
+    if (category) {
+        category.subcategories = category.subcategories.filter(subcategory => subcategory.name !== subcategoryName);
+        localStorage.setItem('categories', JSON.stringify(categories));
+        updateLinks(); // 刷新页面
+    }
+}
+
+// 删除一级分类的函数
+function deleteCategory(categoryName: string): void {
+    categories = categories.filter(category => category.name !== categoryName);
+    localStorage.setItem('categories', JSON.stringify(categories));
+    updateLinks(); // 刷新页面
+}
+
+// 确认删除网址的函数
+function confirmDeleteLink(categoryName: string, subcategoryName: string, linkTitle: string): void {
+    if (confirm(`确定要删除网址 "${linkTitle}" 吗？`)) {
+        deleteLink(categoryName, subcategoryName, linkTitle);
+    }
+}
+
+// 确认删除二级分类的函数
+function confirmDeleteSubcategory(categoryName: string, subcategoryName: string): void {
+    if (confirm(`确定要删除二级分类 "${subcategoryName}" 及其所有网址吗？`)) {
+        deleteSubcategory(categoryName, subcategoryName);
+    }
+}
+
+// 确认删除一级分类的函数
+function confirmDeleteCategory(categoryName: string): void {
+    if (confirm(`确定要删除一级分类 "${categoryName}" 及其所有二级分类和网址吗？`)) {
+        deleteCategory(categoryName);
     }
 }
 
