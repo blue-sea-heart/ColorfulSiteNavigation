@@ -19,17 +19,9 @@ function toggleEditMode() {
     updateLinks(); // 切换编辑模式时刷新页面
     updateModeDisplay(); // 更新模式显示
     // 根据编辑模式显示或隐藏按钮
-    const addLinkBtn = document.getElementById("add-link-btn");
-    if (addLinkBtn) {
-        addLinkBtn.style.display = isEditMode ? 'block' : 'none';
-    }
     const addCategoryBtn = document.getElementById("add-category-btn");
     if (addCategoryBtn) {
         addCategoryBtn.style.display = isEditMode ? 'block' : 'none';
-    }
-    const addSubcategoryBtn = document.getElementById("add-subcategory-btn");
-    if (addSubcategoryBtn) {
-        addSubcategoryBtn.style.display = isEditMode ? 'block' : 'none';
     }
 }
 // 添加网址的函数
@@ -60,14 +52,19 @@ function addLink() {
         subcategoryObj.links.push(newLink);
         localStorage.setItem('categories', JSON.stringify(categories));
         updateLinks(); // 刷新页面
+        closeAddLinkForm(); // 自动关闭表单
     }
-    closeAddLinkForm();
 }
 // 更新网址列表
 function updateLinks() {
     const linkList = document.getElementById("link-list");
     linkList.innerHTML = "";
     categories.forEach(category => {
+        const categoryHeader = document.createElement("div");
+        categoryHeader.textContent = `一级分类: ${category.name}`;
+        categoryHeader.style.fontWeight = "bold";
+        categoryHeader.style.marginTop = "10px";
+        linkList.appendChild(categoryHeader);
         category.subcategories.forEach(subcategory => {
             const subcategoryCard = document.createElement("div");
             subcategoryCard.style.backgroundColor = subcategory.color;
@@ -76,6 +73,10 @@ function updateLinks() {
                 subcategoryCard.setAttribute('draggable', 'true');
                 subcategoryCard.addEventListener('dragstart', (event) => dragStart(event, category.name, subcategory.name));
             }
+            const subcategoryHeader = document.createElement("div");
+            subcategoryHeader.textContent = `二级分类: ${subcategory.name}`;
+            subcategoryHeader.style.fontWeight = "bold";
+            subcategoryCard.appendChild(subcategoryHeader);
             subcategory.links.forEach(link => {
                 const linkElement = document.createElement("a");
                 linkElement.href = link.url;
@@ -165,8 +166,8 @@ function addCategory() {
         const categoryObj = { name: categoryName, subcategories: [] };
         categories.push(categoryObj);
         localStorage.setItem('categories', JSON.stringify(categories));
-        updateCategorySelector();
-        closeAddCategoryForm();
+        updateLinks(); // 刷新页面
+        closeAddCategoryForm(); // 自动关闭表单
     }
 }
 // 关闭添加二级分类表单
@@ -200,8 +201,8 @@ function addSubcategory() {
             categoryObj.subcategories.push(subcategoryObj);
             localStorage.setItem('categories', JSON.stringify(categories));
             updateLinks(); // 刷新页面
+            closeAddSubcategoryForm(); // 自动关闭表单
         }
-        closeAddSubcategoryForm();
     }
 }
 // 删除网址的函数
@@ -249,21 +250,9 @@ function confirmDeleteCategory(categoryName) {
         deleteCategory(categoryName);
     }
 }
-// 更新分类选择器
-function updateCategorySelector() {
-    const categorySelector = document.getElementById("category");
-    categorySelector.innerHTML = '<option value="all">全部</option>';
-    categories.forEach(category => {
-        const option = document.createElement("option");
-        option.value = category.name;
-        option.textContent = category.name;
-        categorySelector.appendChild(option);
-    });
-}
 // 初始化函数
 function initialize() {
     updateLinks();
-    updateCategorySelector();
 }
 // 页面加载时调用初始化函数
 window.onload = initialize;

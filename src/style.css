@@ -85,10 +85,12 @@ footer {
         width: 180px;
     }
 }
+
 #mode-display {
     margin-left: 10px;
     font-weight: bold;
 }
+
 #add-category-form, #add-subcategory-form {
     background-color: white;
     padding: 20px;

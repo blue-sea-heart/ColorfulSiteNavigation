@@ -40,19 +40,9 @@ function toggleEditMode() {
     updateModeDisplay(); // 更新模式显示
 
     // 根据编辑模式显示或隐藏按钮
-    const addLinkBtn = document.getElementById("add-link-btn") as HTMLElement;
-    if (addLinkBtn) {
-        addLinkBtn.style.display = isEditMode ? 'block' : 'none';
-    }
-
     const addCategoryBtn = document.getElementById("add-category-btn") as HTMLElement;
     if (addCategoryBtn) {
         addCategoryBtn.style.display = isEditMode ? 'block' : 'none';
-    }
-
-    const addSubcategoryBtn = document.getElementById("add-subcategory-btn") as HTMLElement;
-    if (addSubcategoryBtn) {
-        addSubcategoryBtn.style.display = isEditMode ? 'block' : 'none';
     }
 }
 
@@ -89,8 +79,8 @@ function addLink(): void {
         localStorage.setItem('categories', JSON.stringify(categories));
 
         updateLinks(); // 刷新页面
+        closeAddLinkForm(); // 自动关闭表单
     }
-    closeAddLinkForm();
 }
 
 // 更新网址列表
@@ -99,6 +89,12 @@ function updateLinks(): void {
     linkList.innerHTML = "";
 
     categories.forEach(category => {
+        const categoryHeader = document.createElement("div");
+        categoryHeader.textContent = `一级分类: ${category.name}`;
+        categoryHeader.style.fontWeight = "bold";
+        categoryHeader.style.marginTop = "10px";
+        linkList.appendChild(categoryHeader);
+
         category.subcategories.forEach(subcategory => {
             const subcategoryCard = document.createElement("div");
             subcategoryCard.style.backgroundColor = subcategory.color;
@@ -107,6 +103,11 @@ function updateLinks(): void {
                 subcategoryCard.setAttribute('draggable', 'true');
                 subcategoryCard.addEventListener('dragstart', (event) => dragStart(event, category.name, subcategory.name));
             }
+
+            const subcategoryHeader = document.createElement("div");
+            subcategoryHeader.textContent = `二级分类: ${subcategory.name}`;
+            subcategoryHeader.style.fontWeight = "bold";
+            subcategoryCard.appendChild(subcategoryHeader);
 
             subcategory.links.forEach(link => {
                 const linkElement = document.createElement("a");
@@ -153,7 +154,6 @@ function updateLinks(): void {
         }
     });
 }
-
 
 // 拖拽事件处理
 function dragStart(event: DragEvent, categoryName: string, subcategoryName: string): void {
@@ -213,8 +213,8 @@ function addCategory(): void {
         const categoryObj = { name: categoryName, subcategories: [] };
         categories.push(categoryObj);
         localStorage.setItem('categories', JSON.stringify(categories));
-        updateCategorySelector();
-        closeAddCategoryForm();
+        updateLinks(); // 刷新页面
+        closeAddCategoryForm(); // 自动关闭表单
     }
 }
 
@@ -254,8 +254,8 @@ function addSubcategory(): void {
             categoryObj.subcategories.push(subcategoryObj);
             localStorage.setItem('categories', JSON.stringify(categories));
             updateLinks(); // 刷新页面
+            closeAddSubcategoryForm(); // 自动关闭表单
         }
-        closeAddSubcategoryForm();
     }
 }
 
@@ -310,22 +310,9 @@ function confirmDeleteCategory(categoryName: string): void {
     }
 }
 
-// 更新分类选择器
-function updateCategorySelector(): void {
-    const categorySelector = document.getElementById("category") as HTMLSelectElement;
-    categorySelector.innerHTML = '<option value="all">全部</option>';
-    categories.forEach(category => {
-        const option = document.createElement("option");
-        option.value = category.name;
-        option.textContent = category.name;
-        categorySelector.appendChild(option);
-    });
-}
-
 // 初始化函数
 function initialize(): void {
     updateLinks();
-    updateCategorySelector();
 }
 
 // 页面加载时调用初始化函数
