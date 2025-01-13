@@ -27,6 +27,10 @@ function toggleEditMode() {
     if (addCategoryBtn) {
         addCategoryBtn.style.display = isEditMode ? 'block' : 'none';
     }
+    const addSubcategoryBtn = document.getElementById("add-subcategory-btn");
+    if (addSubcategoryBtn) {
+        addSubcategoryBtn.style.display = isEditMode ? 'block' : 'none';
+    }
 }
 // 添加网址的函数
 function addLink() {
@@ -36,8 +40,8 @@ function addLink() {
     }
     const title = document.getElementById("link-title").value;
     const url = document.getElementById("link-url").value;
-    const category = document.getElementById("link-category").value;
-    const subcategory = document.getElementById("link-subcategory").value;
+    const category = document.getElementById("link-category-display").textContent;
+    const subcategory = document.getElementById("link-subcategory-display").textContent;
     if (title && url && category && subcategory) {
         // 找到一级分类
         let categoryObj = categories.find(c => c.name === category);
@@ -114,10 +118,8 @@ function closeAddLinkForm() {
 function showAddLinkForm(categoryName, subcategoryName) {
     const addLinkForm = document.getElementById("add-link-form");
     addLinkForm.style.display = "block";
-    document.getElementById("link-category").value = categoryName;
-    document.getElementById("link-category").disabled = true; // 禁用一级分类输入框
-    document.getElementById("link-subcategory").value = subcategoryName;
-    document.getElementById("link-subcategory").disabled = true; // 禁用二级分类输入框
+    document.getElementById("link-category-display").textContent = categoryName;
+    document.getElementById("link-subcategory-display").textContent = subcategoryName;
     document.getElementById("link-title").value = "";
     document.getElementById("link-url").value = "";
 }
@@ -127,7 +129,8 @@ function closeAddCategoryForm() {
 }
 // 显示添加一级分类表单
 function showAddCategoryForm() {
-    document.getElementById("add-category-form").style.display = "block";
+    const addCategoryForm = document.getElementById("add-category-form");
+    addCategoryForm.style.display = "block";
 }
 // 添加一级分类的函数
 function addCategory() {
@@ -137,6 +140,11 @@ function addCategory() {
     }
     const categoryName = document.getElementById("category-name").value;
     if (categoryName) {
+        // 检查一级分类是否已存在
+        if (categories.some(c => c.name === categoryName)) {
+            alert("该一级分类名称已存在，请使用其他名称！");
+            return;
+        }
         const categoryObj = { name: categoryName, subcategories: [] };
         categories.push(categoryObj);
         localStorage.setItem('categories', JSON.stringify(categories));
@@ -152,7 +160,7 @@ function closeAddSubcategoryForm() {
 function showAddSubcategoryForm(categoryName) {
     const addSubcategoryForm = document.getElementById("add-subcategory-form");
     addSubcategoryForm.style.display = "block";
-    document.getElementById("subcategory-category").value = categoryName;
+    document.getElementById("subcategory-category-display").textContent = categoryName;
 }
 // 添加二级分类的函数
 function addSubcategory() {
@@ -160,11 +168,16 @@ function addSubcategory() {
         alert("请先切换到编辑模式！");
         return;
     }
-    const categoryName = document.getElementById("subcategory-category").value;
+    const categoryName = document.getElementById("subcategory-category-display").textContent;
     const subcategoryName = document.getElementById("subcategory-name").value;
     if (categoryName && subcategoryName) {
         const categoryObj = categories.find(c => c.name === categoryName);
         if (categoryObj) {
+            // 检查二级分类是否已存在
+            if (categoryObj.subcategories.some(s => s.name === subcategoryName)) {
+                alert("该二级分类名称在当前一级分类下已存在，请使用其他名称！");
+                return;
+            }
             const randomColor = generateColor("#ff6347"); // 使用一级分类颜色生成二级分类颜色
             const subcategoryObj = { name: subcategoryName, color: randomColor, links: [] };
             categoryObj.subcategories.push(subcategoryObj);
@@ -185,3 +198,10 @@ function updateCategorySelector() {
         categorySelector.appendChild(option);
     });
 }
+// 初始化函数
+function initialize() {
+    updateLinks();
+    updateCategorySelector();
+}
+// 页面加载时调用初始化函数
+window.onload = initialize;

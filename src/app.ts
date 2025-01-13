@@ -50,6 +50,10 @@ function toggleEditMode() {
         addCategoryBtn.style.display = isEditMode ? 'block' : 'none';
     }
 
+    const addSubcategoryBtn = document.getElementById("add-subcategory-btn") as HTMLElement;
+    if (addSubcategoryBtn) {
+        addSubcategoryBtn.style.display = isEditMode ? 'block' : 'none';
+    }
 }
 
 // 添加网址的函数
@@ -61,8 +65,8 @@ function addLink(): void {
 
     const title = (document.getElementById("link-title") as HTMLInputElement).value;
     const url = (document.getElementById("link-url") as HTMLInputElement).value;
-    const category = (document.getElementById("link-category") as HTMLInputElement).value;
-    const subcategory = (document.getElementById("link-subcategory") as HTMLInputElement).value;
+    const category = (document.getElementById("link-category-display") as HTMLElement).textContent!;
+    const subcategory = (document.getElementById("link-subcategory-display") as HTMLElement).textContent!;
 
     if (title && url && category && subcategory) {
         // 找到一级分类
@@ -130,7 +134,6 @@ function updateLinks(): void {
     });
 }
 
-
 // 拖拽事件处理
 function dragStart(event: DragEvent, categoryName: string, subcategoryName: string): void {
     const dragData = { categoryName, subcategoryName };
@@ -153,11 +156,8 @@ function showAddLinkForm(categoryName: string, subcategoryName: string): void {
     const addLinkForm = document.getElementById("add-link-form")!;
     addLinkForm.style.display = "block";
 
-    (document.getElementById("link-category") as HTMLInputElement).value = categoryName;
-    (document.getElementById("link-category") as HTMLInputElement).disabled = true; // 禁用一级分类输入框
-
-    (document.getElementById("link-subcategory") as HTMLInputElement).value = subcategoryName;
-    (document.getElementById("link-subcategory") as HTMLInputElement).disabled = true; // 禁用二级分类输入框
+    (document.getElementById("link-category-display") as HTMLElement).textContent = categoryName;
+    (document.getElementById("link-subcategory-display") as HTMLElement).textContent = subcategoryName;
 
     (document.getElementById("link-title") as HTMLInputElement).value = "";
     (document.getElementById("link-url") as HTMLInputElement).value = "";
@@ -170,7 +170,8 @@ function closeAddCategoryForm(): void {
 
 // 显示添加一级分类表单
 function showAddCategoryForm(): void {
-    document.getElementById("add-category-form")!.style.display = "block";
+    const addCategoryForm = document.getElementById("add-category-form")!;
+    addCategoryForm.style.display = "block";
 }
 
 // 添加一级分类的函数
@@ -182,6 +183,12 @@ function addCategory(): void {
 
     const categoryName = (document.getElementById("category-name") as HTMLInputElement).value;
     if (categoryName) {
+        // 检查一级分类是否已存在
+        if (categories.some(c => c.name === categoryName)) {
+            alert("该一级分类名称已存在，请使用其他名称！");
+            return;
+        }
+
         const categoryObj = { name: categoryName, subcategories: [] };
         categories.push(categoryObj);
         localStorage.setItem('categories', JSON.stringify(categories));
@@ -200,8 +207,9 @@ function showAddSubcategoryForm(categoryName: string): void {
     const addSubcategoryForm = document.getElementById("add-subcategory-form")!;
     addSubcategoryForm.style.display = "block";
 
-    (document.getElementById("subcategory-category") as HTMLInputElement).value = categoryName;
+    (document.getElementById("subcategory-category-display") as HTMLElement).textContent = categoryName;
 }
+
 // 添加二级分类的函数
 function addSubcategory(): void {
     if (!isEditMode) {
@@ -209,11 +217,17 @@ function addSubcategory(): void {
         return;
     }
 
-    const categoryName = (document.getElementById("subcategory-category") as HTMLInputElement).value;
+    const categoryName = (document.getElementById("subcategory-category-display") as HTMLElement).textContent!;
     const subcategoryName = (document.getElementById("subcategory-name") as HTMLInputElement).value;
     if (categoryName && subcategoryName) {
         const categoryObj = categories.find(c => c.name === categoryName);
         if (categoryObj) {
+            // 检查二级分类是否已存在
+            if (categoryObj.subcategories.some(s => s.name === subcategoryName)) {
+                alert("该二级分类名称在当前一级分类下已存在，请使用其他名称！");
+                return;
+            }
+
             const randomColor = generateColor("#ff6347"); // 使用一级分类颜色生成二级分类颜色
             const subcategoryObj = { name: subcategoryName, color: randomColor, links: [] };
             categoryObj.subcategories.push(subcategoryObj);
@@ -235,3 +249,12 @@ function updateCategorySelector(): void {
         categorySelector.appendChild(option);
     });
 }
+
+// 初始化函数
+function initialize(): void {
+    updateLinks();
+    updateCategorySelector();
+}
+
+// 页面加载时调用初始化函数
+window.onload = initialize;
